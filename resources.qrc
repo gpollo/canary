@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/Icons/ChevronDoubleLeft.svg</file>
+        <file>resources/Icons/ChevronDoubleRight.svg</file>
+        <file>resources/Icons/ChevronLeft.svg</file>
+        <file>resources/Icons/ChevronRight.svg</file>
+        <file>resources/Icons/OpenDrawer.svg</file>
+        <file>view/Component/Can/BusConfiguration.qml</file>
+        <file>view/Component/Can/DatabaseConfiguration.qml</file>
+        <file>view/Component/Can/DatabaseConfigurationDialog.qml</file>
+        <file>view/Component/Can/DeviceConfiguration.qml</file>
+        <file>view/Component/CanSniffer.qml</file>
+        <file>view/Main.qml</file>
+        <file>view/Material/CircleImage.qml</file>
+        <file>view/Material/Dialog.qml</file>
+        <file>view/Material/MaterialCard.qml</file>
+        <file>view/Material/Toast.qml</file>
+        <file>view/Material/ToastManager.qml</file>
+    </qresource>
+</RCC>
