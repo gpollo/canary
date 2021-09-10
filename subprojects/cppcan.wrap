@@ -1,0 +1,6 @@
+[wrap-git]
+directory = cppcan-git
+lead_directory_missing = true
+
+url = https://github.com/gpollo/cppcan.git
+revision = head
