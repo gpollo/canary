@@ -1,0 +1,9 @@
+subprojects/cppcan-*/
+subprojects/fmt*
+subprojects/lexy*
+subprojects/libcandleapi*
+subprojects/libpcanbasic*
+subprojects/libsocketcan*
+subprojects/nlohmann_json-*/
+subprojects/packagecache/
+subprojects/spdlog*
