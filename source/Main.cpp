@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
         arguments.push_back(argv[i]);
     }
 
-    setenv("QT_QUICK_CONTROLS_STYLE", "Material", 1);
+    putenv("QT_QUICK_CONTROLS_STYLE=Material");
 
     argc = arguments.size();
     argv = arguments.data();
