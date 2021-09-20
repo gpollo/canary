@@ -3,6 +3,15 @@ project('canary', ['cpp'],
     version: 'latest',
 )
 
+cpp_args = []
+if host_machine.system() == 'linux'
+    cpp_args += ['-DBUILD_LINUX']
+elif host_machine.system() == 'windows'
+    cpp_args += ['-DBUILD_WINDOWS']
+else
+    error('Unsupported platform')
+endif
+
 qt5 = import('qt5')
 qt5_dep = dependency('qt5', modules: ['Core', 'Qml', 'Widgets', 'Svg'], required: true)
 
@@ -22,11 +31,12 @@ canary_includes = [
 
 canary_sources = [
     'source/CanBus.cpp',
-    'source/CanDevice.cpp',
     'source/CanDatabase.cpp',
+    'source/CanDevice.cpp',
     'source/Component/CanSniffer.cpp',
     'source/Log.cpp',
     'source/Main.cpp',
+    'source/User.cpp',
     qt5.compile_moc(headers: 'include/CanBus.hpp'),
     qt5.compile_moc(headers: 'include/CanDevice.hpp'),
     qt5.compile_moc(headers: 'include/CanDatabase.hpp'),
@@ -35,15 +45,15 @@ canary_sources = [
 ]
 
 canary_deps = [
-    qt5_dep,
     libcan_dep,
+    qt5_dep,
     spdlog_dep,
 ]
 
 canary = executable('canary', canary_sources,
     include_directories: canary_includes,
     dependencies: canary_deps,
-    # cpp_args: ['-frtti']
+    cpp_args: cpp_args,
 )
 
 #################
