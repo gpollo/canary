@@ -5,6 +5,8 @@
         <file>resources/Icons/ChevronLeft.svg</file>
         <file>resources/Icons/ChevronRight.svg</file>
         <file>resources/Icons/OpenDrawer.svg</file>
+        <file>resources/Icons/Star.svg</file>
+        <file>resources/Icons/StarOutline.svg</file>
         <file>view/Component/Can/BusConfiguration.qml</file>
         <file>view/Component/Can/DatabaseConfiguration.qml</file>
         <file>view/Component/Can/DatabaseConfigurationDialog.qml</file>
