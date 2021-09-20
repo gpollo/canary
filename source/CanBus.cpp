@@ -1,5 +1,5 @@
 #include "CanBus.hpp"
-#include <memory>
+#include "UserConfiguration.hpp"
 
 namespace Canary {
 
@@ -12,11 +12,10 @@ CanBus::CanBus(QObject* parent)
     : QObject(parent),
       database_(std::make_shared<can::databases>()),
       listener_(std::make_shared<can::listener>(database_)) {
-    addDevice();
-    addDatabase();
 }
 
 CanBus::~CanBus() {
+    saveConfig();
     listener_->shutdown();
     listener_->shutdown();
 }
@@ -30,12 +29,12 @@ unsigned int CanBus::getDeviceCount() const {
 }
 
 std::optional<CanBus::Quark> CanBus::connectDevice(can::transceiver::ptr& transceiver) {
-    auto unique_transceiver = transceiver.get_unique_transceiver();
-    if (unique_transceiver == nullptr) {
+    auto uniqueTransceiver = transceiver.get_unique_transceiver();
+    if (uniqueTransceiver == nullptr) {
         return {};
     }
 
-    return listener_->add_transceiver(std::move(unique_transceiver));
+    return listener_->add_transceiver(std::move(uniqueTransceiver));
 }
 
 void CanBus::disconnectDevice(Quark transceiver) {
@@ -102,5 +101,62 @@ void CanBus::removeDatabase(int index) {
         emit databasesChanged();
     }
 }
+
+void CanBus::loadConfig() {
+    nlohmann::json devicesConfig = nlohmann::json::array();
+    nlohmann::json deviceConfig;
+    deviceConfig["driver"]    = "";
+    deviceConfig["interface"] = "";
+    deviceConfig["bitrate"]   = 500000;
+    devicesConfig.push_back(deviceConfig);
+
+    nlohmann::json databasesConfig = nlohmann::json::array();
+    databasesConfig.push_back("");
+
+    nlohmann::json defaultConfig = {{"devices", devicesConfig}, {"databases", databasesConfig}};
+    auto config = UserConfiguration::getKey("can-bus", defaultConfig);
+
+    for (auto deviceConfig : config["devices"]) {
+        auto canDevice = new CanDevice();
+        auto driver = QString::fromStdString(deviceConfig["driver"].get<std::string>());
+        auto interface = QString::fromStdString(deviceConfig["interface"].get<std::string>());
+        auto bitrate = deviceConfig["bitrate"].get<unsigned int>();
+        canDevice->setDriver(driver);
+        canDevice->setInterface(interface);
+        canDevice->setBitrate(bitrate);
+        canDevice->connect();
+        devices_.insert(devices_.end(), canDevice);
+    }
+    emit devicesChanged();
+
+    for (auto databaseConfig : config["databases"]) {
+        auto canDatabase = new CanDatabase();
+        auto path = QString::fromStdString(databaseConfig.get<std::string>());
+        canDatabase->setPath(path);
+        canDatabase->connect();
+        databases_.insert(databases_.end(), canDatabase);
+    }
+    emit databasesChanged();
+}
+
+void CanBus::saveConfig() const {
+    nlohmann::json devicesConfig = nlohmann::json::array();
+    for (const auto* device : devices_) {
+        nlohmann::json deviceConfig;
+        deviceConfig["driver"]    = device->getDriver().toStdString();
+        deviceConfig["interface"] = device->getInterface().toStdString();
+        deviceConfig["bitrate"]   = device->getBitrate();
+        devicesConfig.push_back(deviceConfig);
+    }
+
+    nlohmann::json databasesConfig = nlohmann::json::array();
+    for (const auto* database : databases_) {
+        databasesConfig.push_back(database->getPath().toStdString());
+    }
+
+    nlohmann::json config = {{"devices", devicesConfig}, {"databases", databasesConfig}};
+    UserConfiguration::setKey("can-bus", config);
+}
+
 
 } /* namespace Canary */

@@ -6,6 +6,7 @@
 #include <QtWidgets/QApplication>
 
 #include "CanBus.hpp"
+#include "UserConfiguration.hpp"
 #include "Component/CanSniffer.hpp"
 
 int main(int argc, char* argv[]) {
@@ -18,6 +19,9 @@ int main(int argc, char* argv[]) {
 
     argc = arguments.size();
     argv = arguments.data();
+
+    Canary::UserConfiguration::load();
+    Canary::CanBus::getInstance().loadConfig();
 
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;

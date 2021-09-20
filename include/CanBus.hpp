@@ -62,6 +62,9 @@ class CanBus : public QObject {
     std::vector<std::pair<SignalConstPtr, uint64_t>> extract(unsigned int identifier, uint8_t* bytes,
                                                              size_t length) const;
 
+    void loadConfig();
+    void saveConfig() const;
+
    public slots:
     void addDevice();
     void removeDevice(int index);
