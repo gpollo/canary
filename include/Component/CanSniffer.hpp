@@ -24,6 +24,7 @@ class CanSniffer : public QAbstractListModel {
         Bytes,
         Values,
         Expanded,
+        Focused,
     };
 
     explicit CanSniffer(QObject* parent = nullptr);
@@ -47,13 +48,15 @@ class CanSniffer : public QAbstractListModel {
         QList<QVariant> bytes_;
         QList<QVariant> values_;
         bool expanded_;
+        bool focused_;
 
         Entry(unsigned int identifier, QString timestamp, QList<QVariant> bytes, QList<QVariant> values)
             : identifier_(identifier),
               timestamp_(std::move(timestamp)),
               bytes_(std::move(bytes)),
               values_(std::move(values)),
-              expanded_(false) {}
+              expanded_(false),
+              focused_(false) {}
     };
 
     std::vector<Entry> entries_;

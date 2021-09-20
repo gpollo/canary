@@ -9,17 +9,13 @@
 namespace Canary::Component {
 
 CanSniffer::CanSniffer(QObject* parent) : QAbstractListModel(parent), rawSubscriberGuard_(nullptr) {
-    logger->error("Canary::Component::CanSniffer()");
-
     CanBus::RawCallback callback = std::bind(&CanSniffer::rawCallback, this, std::placeholders::_1);
     rawSubscriberGuard_          = std::move(CanBus::getInstance().subscribe(callback));
 
     QObject::connect(this, &CanSniffer::newEntry, this, &CanSniffer::onNewEntry);
 }
 
-CanSniffer::~CanSniffer() {
-    logger->error("Canary::Component::~CanSniffer()");
-}
+CanSniffer::~CanSniffer() {}
 
 int CanSniffer::rowCount(const QModelIndex& parent) const {
     Q_UNUSED(parent);
@@ -40,6 +36,12 @@ bool CanSniffer::setData(const QModelIndex& index, const QVariant& value, int ro
     case Role::Expanded:
         if (value.typeName() == QString("bool")) {
             entries_[index.row()].expanded_ = value.value<bool>();
+            return true;
+        }
+        break;
+    case Role::Focused:
+        if (value.typeName() == QString("bool")) {
+            entries_[index.row()].focused_ = value.value<bool>();
             return true;
         }
         break;
@@ -66,6 +68,8 @@ QVariant CanSniffer::data(const QModelIndex& index, int role) const {
         return entries_.at(index.row()).values_;
     case Role::Expanded:
         return entries_.at(index.row()).expanded_;
+    case Role::Focused:
+        return entries_.at(index.row()).focused_;
     default:
         return QVariant();
     }
@@ -83,6 +87,8 @@ QVariant CanSniffer::headerData(int section, Qt::Orientation orientation, int ro
         return "Values";
     case Role::Expanded:
         return "Expanded";
+    case Role::Focused:
+        return "Focused";
     default:
         return QVariant();
     }
@@ -92,7 +98,7 @@ QHash<int, QByteArray> CanSniffer::roleNames() const {
     return {
         {static_cast<int>(Role::Timestamp), "timestamp"}, {static_cast<int>(Role::Identifier), "identifier"},
         {static_cast<int>(Role::Bytes), "bytes"},         {static_cast<int>(Role::Values), "values"},
-        {static_cast<int>(Role::Expanded), "expanded"},
+        {static_cast<int>(Role::Expanded), "expanded"},   {static_cast<int>(Role::Focused), "focused"}
     };
 }
 

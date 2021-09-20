@@ -7,6 +7,7 @@ ListView {
     id: view
     width: parent.width
     height: 600
+    clip: true
 
     function decimalToHex(d, padding) {
         var hex = Number(d).toString(16);
@@ -21,88 +22,111 @@ ListView {
 
     model: CanSnifferModel {}
 
+    ScrollBar.vertical: ScrollBar {
+        active: true
+    }
+
     delegate: Column {
         width: view.width
         leftPadding: 10
         rightPadding: 10
 
-        RowLayout {
+        Row {
             width: parent.width - parent.leftPadding - parent.rightPadding
 
-            Button {
-                Layout.alignment: Qt.AlignVCenter
-                width: parent.height / 1.5
-                height: parent.height / 1.5
+            RoundButton {
+                id: focusButton
+                width: 20
+                height: 20
+                padding: 0
                 display: AbstractButton.IconOnly
-                // enabled: (Object.getOwnPropertyNames(modelData.signals).length != 0)
-                icon.source: (enabled) ? ((expanded) ? "qrc:/resources/Icons/ChevronDoubleLeft.svg"
-                                                     : "qrc:/resources/Icons/ChevronDoubleRight.svg") : ""
+                flat: true
+                hoverEnabled : false
+                onClicked: focused = !focused
+                icon.source: (enabled) ? ((focused) ? "qrc:/resources/Icons/Star.svg"
+                                                    : "qrc:/resources/Icons/StarOutline.svg") : ""
+            }
+
+            RoundButton {
+                id: expandButton
+                width: 20
+                height: 20
+                padding: 0
+                display: AbstractButton.IconOnly
                 flat: true
                 hoverEnabled : false
                 onClicked: expanded = !expanded
+                icon.source: (enabled) ? ((expanded) ? "qrc:/resources/Icons/ChevronDoubleLeft.svg"
+                                                     : "qrc:/resources/Icons/ChevronDoubleRight.svg") : ""
             }
 
-            Text {
-                Layout.alignment: Qt.AlignVCenter
-                Layout.fillWidth: true
-                Layout.preferredWidth: 2
-                text: timestamp
-                font.pointSize: 11
-            }
+            Column {
+                width: parent.width - focusButton.width - expandButton.width
 
-            Text {
-                Layout.alignment: Qt.AlignVCenter
-                Layout.fillWidth: true
-                Layout.preferredWidth: 1
-                text: identifier
-                font.pointSize: 11
-                horizontalAlignment: Text.AlignHCenter
-            }
-
-            Row {
-                id: bytesRow
-                Layout.alignment: Qt.AlignVCenter
-                Layout.fillWidth: true
-                Layout.preferredWidth: 2
-
-                Repeater {
-                    model: bytes
+                RowLayout {
+                    width: parent.width
 
                     Text {
-                        text: decimalToHex(modelData)
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: 2
+                        text: timestamp
                         font.pointSize: 11
-                        width: bytesRow.width/8
+                    }
+
+                    Text {
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: 1
+                        text: identifier
+                        font.pointSize: 11
                         horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    Row {
+                        id: bytesRow
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: 2
+
+                        Repeater {
+                            model: bytes
+
+                            Text {
+                                text: decimalToHex(modelData)
+                                font.pointSize: 11
+                                width: bytesRow.width/8
+                                horizontalAlignment: Text.AlignHCenter
+                            }
+                        }
+                    }
+                }
+
+                Repeater {
+                    model: values
+
+                    RowLayout {
+                        width: parent.width
+                        height: expanded ? 20 : 0
+                        clip: true
+
+                        Text {
+                            Layout.fillWidth: true
+                            Layout.preferredWidth: 3
+                            text: modelData[0]
+                        }
+
+                        Text {
+                            Layout.fillWidth: true
+                            Layout.preferredWidth: 2
+                            text: modelData[1]
+                            leftPadding: 6
+                        }
                     }
                 }
             }
         }
 
-        Repeater {
-            model: values
 
-            RowLayout {
-                width: view.width
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredWidth: 1
-                    height: 10
-                }
-
-                Text {
-                    Layout.fillWidth: true
-                    Layout.preferredWidth: 1
-                    text: modelData[0]
-                }
-
-                Text {
-                    Layout.fillWidth: true
-                    Layout.preferredWidth: 1
-                    text: modelData[1]
-                }
-
-            }
-        }
     }
 }
