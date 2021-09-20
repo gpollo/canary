@@ -21,6 +21,9 @@ libcan_dep = cppcan_subproject.get_variable('libcan_dep')
 spdlog_subproject = cppcan_subproject.get_variable('spdlog_subproject')
 spdlog_dep = spdlog_subproject.get_variable('spdlog_dep')
 
+json_subproject = subproject('json')
+json_dep = json_subproject.get_variable('nlohmann_json_dep')
+
 ##########
 # canary #
 ##########
@@ -37,6 +40,7 @@ canary_sources = [
     'source/Log.cpp',
     'source/Main.cpp',
     'source/User.cpp',
+    'source/UserConfiguration.cpp',
     qt5.compile_moc(headers: 'include/CanBus.hpp'),
     qt5.compile_moc(headers: 'include/CanDevice.hpp'),
     qt5.compile_moc(headers: 'include/CanDatabase.hpp'),
@@ -45,6 +49,7 @@ canary_sources = [
 ]
 
 canary_deps = [
+    json_dep,
     libcan_dep,
     qt5_dep,
     spdlog_dep,
