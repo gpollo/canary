@@ -161,7 +161,7 @@ void CanSniffer::onNewEntry(unsigned int identifier, QString timestamp, QList<QV
         entries_[row].values_     = values;
         emit dataChanged(index, index);
     } else {
-        beginInsertColumns(QModelIndex(), rowCount(), rowCount());
+        beginInsertRows(QModelIndex(), rowCount(), rowCount());
         entries_.emplace_back(identifier, std::move(timestamp), std::move(bytes), std::move(values));
         identifierIndices_.emplace(identifier, rowCount() - 1);
         endInsertRows();
