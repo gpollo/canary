@@ -1,5 +1,5 @@
 project('canary', ['cpp'],
-    default_options: ['cpp_std=c++20'],
+    default_options: ['cpp_std=c++2a'],
     version: 'latest',
 )
 
